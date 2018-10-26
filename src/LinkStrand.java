@@ -94,6 +94,7 @@ public class LinkStrand implements IDnaStrand{
 			dex++;
 			if (dex >= list.info.length()) {
 				dex = 0;
+				if(list.next == null) throw new IndexOutOfBoundsException();
 				list = list.next;
 			}
 		}
