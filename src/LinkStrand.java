@@ -28,7 +28,10 @@ public class LinkStrand implements IDnaStrand{
 	public long size() {
 		return mySize;
 	}
-
+	/* initializes assigns values to each instance field that is not a part of
+	 * the charAt() method
+	 * @param source is the string of nucleotides that form the DNA being spliced
+	 */
 	@Override
 	public void initialize(String source) {
 		Node x = new Node(source);
@@ -42,7 +45,14 @@ public class LinkStrand implements IDnaStrand{
 	public IDnaStrand getInstance(String source) {
 		return new LinkStrand(source);
 	}
-
+	/*
+	 * This method adds a node to the LinkedList of nodes by
+	 * first creating a new Node with the dna as the info, then changing
+	 * myLast's pointer to the new node, and increasing mySize and adding
+	 * one to the myAppends count
+	 * @param dna is the DNA sequence being appended
+	 * @returns the LinkStrand object with the appended node
+	 */
 	@Override
 	public IDnaStrand append(String dna) {
 		Node x = new Node(dna);
@@ -52,7 +62,12 @@ public class LinkStrand implements IDnaStrand{
 		myAppends++;
 		return this;
 	}
-
+	/*
+	 * (non-Javadoc)
+	 * @returns a new LinkStrand with the reverse of the object's LinkedList, 
+	 * such that the last node in the original list becomes the first node,
+	 * which points to the second-to-last node, etc.
+	 */
 	@Override
 	public IDnaStrand reverse() {
 		Node start = myFirst;
@@ -80,7 +95,13 @@ public class LinkStrand implements IDnaStrand{
 	public int getAppendCount() {
 		return myAppends;
 	}
-
+	/*
+	 * Method traverse through the characters in each node, without restarting
+	 * to locate the character at index
+	 * @param index is the index at which the character desired is located,
+	 * and is independent of which node contains that character
+	 * @return desired character at index
+	 */
 	@Override
 	public char charAt(int index) {
 		int count = 0;
@@ -105,7 +126,11 @@ public class LinkStrand implements IDnaStrand{
 		
 		return list.info.charAt(dex);
 	}
-	
+	/*
+	 * Method appends all the info from each node of the LinkedList
+	 * using StringBuilder, then
+	 * @returns the String created form StringBuilder
+	 */
 	@Override
 	public String toString() {
 		StringBuilder str = new StringBuilder("");

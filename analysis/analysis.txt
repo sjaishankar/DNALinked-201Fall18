@@ -3,11 +3,132 @@ sj251
 
 Question 1: are the benchmark timings for StringStrand consistent with 
 the explanation below that the time to execute cutAndSplice is O(b2S)?
+	Yes, the benchmark timings for StringStrand are consistent with the O(b^2s) 
+	execution time for cutAndSplice, considering that b is half the append calls 
+	and the runtime increases only with respect to the length of the splicee. This 
+	is especially evident with the larger splicee numbers -- the execution time 
+	approximately doubles when the splicee length increases from 33,554,432 to 
+	67,108,864.
+		
+		dna length = 623
+		cutting at enzyme gaattc
+		-----
+		Class	                splicee	      recomb	time	appends
+		-----
+		StringStrand:	            256	            873	0.000	2
+		StringStrand:	            512	          1,129	0.000	2
+		StringStrand:	          1,024	          1,641	0.000	2
+		StringStrand:	          2,048	          2,665	0.000	2
+		StringStrand:	          4,096	          4,713	0.000	2
+		StringStrand:	          8,192	          8,809	0.000	2
+		StringStrand:	         16,384	         17,001	0.000	2
+		StringStrand:	         32,768	         33,385	0.000	2
+		StringStrand:	         65,536	         66,153	0.000	2
+		StringStrand:	        131,072	        131,689	0.000	2
+		StringStrand:	        262,144	        262,761	0.001	2
+		StringStrand:	        524,288	        524,905	0.002	2
+		StringStrand:	      1,048,576	      1,049,193	0.005	2
+		StringStrand:	      2,097,152	      2,097,769	0.006	2
+		StringStrand:	      4,194,304	      4,194,921	0.021	2
+		StringStrand:	      8,388,608	      8,389,225	0.032	2
+		StringStrand:	     16,777,216	     16,777,833	0.048	2
+		StringStrand:	     33,554,432	     33,555,049	0.086	2
+		StringStrand:	     67,108,864	     67,109,481	0.146	2
+		StringStrand:	    134,217,728	    134,218,345	0.380	2
+		Exception in thread "main" java.lang.OutOfMemoryError: Java heap space
+			at java.base/java.util.Arrays.copyOf(Arrays.java:3744)
+			at java.base/java.lang.AbstractStringBuilder.ensureCapacityInternal(AbstractStringBuilder.java:146)
+			at java.base/java.lang.AbstractStringBuilder.append(AbstractStringBuilder.java:512)
+			at java.base/java.lang.StringBuilder.append(StringBuilder.java:141)
+			at StringStrand.append(StringStrand.java:70)
+			at IDnaStrand.cutAndSplice(IDnaStrand.java:51)
+			at DNABenchmark.strandSpliceBenchmark(DNABenchmark.java:67)
+			at DNABenchmark.main(DNABenchmark.java:113)
 
 Question 2: are the benchmark timings for StringBuilderStrand consistent 
 with the explanation below that the time to execute cutAndSplice is O(bS)?
+	Yes, the benchmark timings for StringBuilderStrand are consistent with
+	the explanation for the O(bS) execution time. Looking at b, b will always
+	be less than b^2, so the StringBuilder runtime should automatically be
+	faster than the runtime for StringStrand, which it is. 
+		
+		dna length = 623
+		cutting at enzyme gaattc
+		-----
+		Class	                splicee	      recomb	time	appends
+		-----
+		StringBuilderStrand:	            256	            873	0.000	2
+		StringBuilderStrand:	            512	          1,129	0.000	2
+		StringBuilderStrand:	          1,024	          1,641	0.000	2
+		StringBuilderStrand:	          2,048	          2,665	0.000	2
+		StringBuilderStrand:	          4,096	          4,713	0.000	2
+		StringBuilderStrand:	          8,192	          8,809	0.000	2
+		StringBuilderStrand:	         16,384	         17,001	0.000	2
+		StringBuilderStrand:	         32,768	         33,385	0.000	2
+		StringBuilderStrand:	         65,536	         66,153	0.000	2
+		StringBuilderStrand:	        131,072	        131,689	0.000	2
+		StringBuilderStrand:	        262,144	        262,761	0.001	2
+		StringBuilderStrand:	        524,288	        524,905	0.001	2
+		StringBuilderStrand:	      1,048,576	      1,049,193	0.002	2
+		StringBuilderStrand:	      2,097,152	      2,097,769	0.005	2
+		StringBuilderStrand:	      4,194,304	      4,194,921	0.010	2
+		StringBuilderStrand:	      8,388,608	      8,389,225	0.022	2
+		StringBuilderStrand:	     16,777,216	     16,777,833	0.026	2
+		StringBuilderStrand:	     33,554,432	     33,555,049	0.078	2
+		StringBuilderStrand:	     67,108,864	     67,109,481	0.340	2
+		StringBuilderStrand:	    134,217,728	    134,218,345	0.388	2
+		StringBuilderStrand:	    268,435,456	    268,436,073	0.833	2
+		Exception in thread "main" java.lang.OutOfMemoryError: Java heap space
+			at java.base/java.util.Arrays.copyOf(Arrays.java:3744)
+			at java.base/java.lang.AbstractStringBuilder.ensureCapacityInternal(AbstractStringBuilder.java:146)
+			at java.base/java.lang.AbstractStringBuilder.append(AbstractStringBuilder.java:512)
+			at java.base/java.lang.StringBuilder.append(StringBuilder.java:141)
+			at StringBuilderStrand.append(StringBuilderStrand.java:70)
+			at IDnaStrand.cutAndSplice(IDnaStrand.java:51)
+			at DNABenchmark.strandSpliceBenchmark(DNABenchmark.java:67)
+			at DNABenchmark.main(DNABenchmark.java:113)
 
 Question 3: Explain why the time for LinkStrand does not change much at 
 all over all the runs in the benchmark program. Explain why you think memory 
 is exhausted at the specific strand size you see in your timings -- as compared 
 to exhaustion for String and StringBuilder.
+	The time for LinkStrand does not change much over all the runs in DNABenchmark 
+	because with LinkStrand, the only thing that changes is pointers. As opposed to 
+	String and StringBuilder, where the strings themselves are changed, with LinkStrand,
+	only nodes are changed, which is much faster than changing strings. Memory is 
+	exhausted at a strand size longer than that of both String and StringBuilder because
+	multiple nodes can point to the same object, which doesn't waste memory as it would
+	with String and StringBuilder.
+		dna length = 623
+		cutting at enzyme gaattc
+		-----
+		Class	                splicee	      recomb	time	appends
+		-----
+		LinkStrand:	            256	            873	0.000	2
+		LinkStrand:	            512	          1,129	0.000	2
+		LinkStrand:	          1,024	          1,641	0.000	2
+		LinkStrand:	          2,048	          2,665	0.000	2
+		LinkStrand:	          4,096	          4,713	0.000	2
+		LinkStrand:	          8,192	          8,809	0.000	2
+		LinkStrand:	         16,384	         17,001	0.000	2
+		LinkStrand:	         32,768	         33,385	0.000	2
+		LinkStrand:	         65,536	         66,153	0.000	2
+		LinkStrand:	        131,072	        131,689	0.000	2
+		LinkStrand:	        262,144	        262,761	0.000	2
+		LinkStrand:	        524,288	        524,905	0.000	2
+		LinkStrand:	      1,048,576	      1,049,193	0.000	2
+		LinkStrand:	      2,097,152	      2,097,769	0.000	2
+		LinkStrand:	      4,194,304	      4,194,921	0.000	2
+		LinkStrand:	      8,388,608	      8,389,225	0.000	2
+		LinkStrand:	     16,777,216	     16,777,833	0.000	2
+		LinkStrand:	     33,554,432	     33,555,049	0.000	2
+		LinkStrand:	     67,108,864	     67,109,481	0.000	2
+		LinkStrand:	    134,217,728	    134,218,345	0.000	2
+		LinkStrand:	    268,435,456	    268,436,073	0.000	2
+		LinkStrand:	    536,870,912	    536,871,529	0.000	2
+		Exception in thread "main" java.lang.OutOfMemoryError: Java heap space
+			at java.base/java.util.Arrays.copyOf(Arrays.java:3744)
+			at java.base/java.lang.AbstractStringBuilder.ensureCapacityInternal(AbstractStringBuilder.java:146)
+			at java.base/java.lang.AbstractStringBuilder.append(AbstractStringBuilder.java:512)
+			at java.base/java.lang.StringBuilder.append(StringBuilder.java:141)
+			at DNABenchmark.main(DNABenchmark.java:110)
